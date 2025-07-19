@@ -1,14 +1,6 @@
 set BUILD_GENERATOR_POST=
 set BUILD_PLATFORM_SELECT=
-if "%BUILD_ARCH%"=="x64" (
-	set MSBUILD_PLATFORM=x64
-) else if "%BUILD_ARCH%"=="x86" (
-	set MSBUILD_PLATFORM=win32
-	if "%WITH_CLANG%"=="1" (
-		echo Clang not supported for X86
-		exit /b 1
-	)
-)
+set MSBUILD_PLATFORM=x64
 
 if "%WITH_CLANG%"=="1" (
 	set CLANG_CMAKE_ARGS=-T"llvm"
@@ -26,10 +18,10 @@ if "%WITH_PYDEBUG%"=="1" (
 	set PYDEBUG_CMAKE_ARGS=-DWINDOWS_PYTHON_DEBUG=On
 )
 
-if "%BUILD_VS_YEAR%"=="2019" (
-	set BUILD_PLATFORM_SELECT=-A %MSBUILD_PLATFORM%
-) else (
+if "%BUILD_VS_YEAR%"=="2017" (
 	set BUILD_GENERATOR_POST=%WINDOWS_ARCH%
+) else (
+	set BUILD_PLATFORM_SELECT=-A %MSBUILD_PLATFORM%
 )
 
 set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -G "Visual Studio %BUILD_VS_VER% %BUILD_VS_YEAR%%BUILD_GENERATOR_POST%" %BUILD_PLATFORM_SELECT% %TESTS_CMAKE_ARGS% %CLANG_CMAKE_ARGS% %ASAN_CMAKE_ARGS% %PYDEBUG_CMAKE_ARGS%
@@ -68,20 +60,17 @@ if "%MUST_CONFIGURE%"=="1" (
 	)
 )
 
-echo call "%VCVARS%" %BUILD_ARCH% > %BUILD_DIR%\rebuild.cmd
+echo echo off > %BUILD_DIR%\rebuild.cmd
+echo if "%%VSCMD_VER%%" == "" ^( >> %BUILD_DIR%\rebuild.cmd
+echo   call "%VCVARS%" %BUILD_ARCH% >> %BUILD_DIR%\rebuild.cmd
+echo ^) >> %BUILD_DIR%\rebuild.cmd
 echo "%CMAKE%" . >> %BUILD_DIR%\rebuild.cmd
 echo echo %%TIME%% ^> buildtime.txt >> %BUILD_DIR%\rebuild.cmd
 echo msbuild ^
-	%BUILD_DIR%\Blender.sln ^
-	/target:build ^
+	%BUILD_DIR%\INSTALL.vcxproj ^
 	/property:Configuration=%BUILD_TYPE% ^
 	/maxcpucount:2 ^
 	/verbosity:minimal ^
 	/p:platform=%MSBUILD_PLATFORM% ^
 	/flp:Summary;Verbosity=minimal;LogFile=%BUILD_DIR%\Build.log >> %BUILD_DIR%\rebuild.cmd
-echo msbuild ^
-	%BUILD_DIR%\INSTALL.vcxproj ^
-	/property:Configuration=%BUILD_TYPE% ^
-	/verbosity:minimal ^
-	/p:platform=%MSBUILD_PLATFORM% >> %BUILD_DIR%\rebuild.cmd
 echo echo %%TIME%% ^>^> buildtime.txt >> %BUILD_DIR%\rebuild.cmd

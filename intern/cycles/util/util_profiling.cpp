@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <chrono>
+
 #include "util/util_algorithm.h"
 #include "util/util_profiling.h"
 #include "util/util_set.h"

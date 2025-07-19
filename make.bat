@@ -32,6 +32,7 @@ if "%BUILD_UPDATE%" == "1" (
 )
 
 call "%BLENDER_DIR%\build_files\windows\detect_architecture.cmd"
+if errorlevel 1 goto EOF
 
 if "%BUILD_VS_YEAR%" == "" (
 	call "%BLENDER_DIR%\build_files\windows\autodetect_msvc.cmd"
@@ -54,8 +55,8 @@ echo Building blender with VS%BUILD_VS_YEAR% for %BUILD_ARCH% in %BUILD_DIR%
 call "%BLENDER_DIR%\build_files\windows\check_libraries.cmd"
 if errorlevel 1 goto EOF
 
-call "%BLENDER_DIR%\build_files\windows\check_submodules.cmd"
-if errorlevel 1 goto EOF
+@REM call "%BLENDER_DIR%\build_files\windows\check_submodules.cmd"
+@REM if errorlevel 1 goto EOF
 
 if "%BUILD_WITH_NINJA%" == "" (
 	call "%BLENDER_DIR%\build_files\windows\configure_msbuild.cmd"

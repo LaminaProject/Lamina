@@ -607,11 +607,17 @@ if(WIN32)
 	set(WINDOWS_CODESIGN_PFX_PASSWORD CACHE STRING  "password for pfx file used for codesigning.")
 	mark_as_advanced(WINDOWS_CODESIGN_PFX_PASSWORD)
 
-	option(WINDOWS_USE_VISUAL_STUDIO_FOLDERS "Organize the visual studio project according to source folders." ON)
-	mark_as_advanced(WINDOWS_USE_VISUAL_STUDIO_FOLDERS)
+	option(WINDOWS_USE_VISUAL_STUDIO_PROJECT_FOLDERS "Organize the visual studio projects according to source folder structure." ON)
+	mark_as_advanced(WINDOWS_USE_VISUAL_STUDIO_PROJECT_FOLDERS)
+
+	option(WINDOWS_USE_VISUAL_STUDIO_SOURCE_FOLDERS "Organize the source files in filters matching the source folders." ON)
+	mark_as_advanced(WINDOWS_USE_VISUAL_STUDIO_SOURCE_FOLDERS)
 
 	option(WINDOWS_PYTHON_DEBUG "Include the files needed for debugging python scripts with visual studio 2017+." OFF)
 	mark_as_advanced(WINDOWS_PYTHON_DEBUG)
+
+	option(WITH_WINDOWS_BUNDLE_CRT "Bundle the C runtime for install free distribution." ON)
+	mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
 endif()
 
 # avoid using again
@@ -1549,6 +1555,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC")
 	set(_WARNINGS
 		# warning level:
 		"/W3"
+		"/Wv:18" # temp
 		"/w34062"  # switch statement contains 'default' but no 'case' labels
 		"/w34115"  # 'type' : named type definition in parentheses
 		"/w34189"  # local variable is initialized but not referenced
@@ -1608,15 +1615,19 @@ if(WITH_PYTHON)
 	endif()
 endif()
 
-if(
+if(MSVC)
+  # MSVC needs to be tested first, since clang on windows will
+  # match the compiler test below but clang-cl does not accept -std=c++11
+  # since it is on by default and cannot be turned off.
+  #
+  # Nothing special is needed, C++11 features are available by default.
+elseif(
 	CMAKE_COMPILER_IS_GNUCC OR
 	CMAKE_C_COMPILER_ID MATCHES "Clang" OR
 	CMAKE_C_COMPILER_ID MATCHES "Intel"
 )
 	# TODO(sergey): Do we want c++11 or gnu-c++11 here?
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-elseif(MSVC)
-	# Nothing special is needed, C++11 features are available by default.
 else()
 	message(FATAL_ERROR "Unknown compiler ${CMAKE_C_COMPILER_ID}, can't enable C++11 build")
 endif()

@@ -30,9 +30,15 @@ set LLVM_DIR=
 :DetectionComplete	
 	set CC=%LLVM_DIR%\bin\clang-cl
 	set CXX=%LLVM_DIR%\bin\clang-cl
-	rem build and tested against 2017 15.7
-	set CFLAGS=-m64 -fmsc-version=1914
-	set CXXFLAGS=-m64 -fmsc-version=1914
+	if "%BUILD_VS_YEAR%" == "2019" (
+		rem build and tested against 2019 16.2
+		set CFLAGS=-m64 -fmsc-version=1922
+		set CXXFLAGS=-m64 -fmsc-version=1922
+	) else (
+		rem build and tested against 2017 15.7
+		set CFLAGS=-m64 -fmsc-version=1914
+		set CXXFLAGS=-m64 -fmsc-version=1914
+	)
 	if "%WITH_ASAN%"=="1" (
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -DWITH_COMPILER_ASAN=On
 	)	
@@ -74,7 +80,10 @@ if "%MUST_CONFIGURE%"=="1" (
 	)
 )
 
-echo call "%VCVARS%" %BUILD_ARCH% > %BUILD_DIR%\rebuild.cmd
+echo echo off > %BUILD_DIR%\rebuild.cmd
+echo if "%%VSCMD_VER%%" == "" ^( >> %BUILD_DIR%\rebuild.cmd
+echo   call "%VCVARS%" %BUILD_ARCH% >> %BUILD_DIR%\rebuild.cmd
+echo ^) >> %BUILD_DIR%\rebuild.cmd
 echo echo %%TIME%% ^> buildtime.txt >> %BUILD_DIR%\rebuild.cmd
-echo ninja install >> %BUILD_DIR%\rebuild.cmd 
+echo ninja install %%* >> %BUILD_DIR%\rebuild.cmd
 echo echo %%TIME%% ^>^> buildtime.txt >> %BUILD_DIR%\rebuild.cmd

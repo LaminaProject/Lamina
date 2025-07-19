@@ -40,7 +40,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
 	endif()
 endif()
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ${WINDOWS_USE_VISUAL_STUDIO_FOLDERS})
+set_property(GLOBAL PROPERTY USE_FOLDERS ${WINDOWS_USE_VISUAL_STUDIO_PROJECT_FOLDERS})
 
 if(NOT WITH_PYTHON_MODULE)
 	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT blender)
@@ -118,34 +118,32 @@ add_definitions(
 # MSVC11 needs _ALLOW_KEYWORD_MACROS to build
 add_definitions(-D_ALLOW_KEYWORD_MACROS)
 
-# We want to support Vista level ABI
-add_definitions(-D_WIN32_WINNT=0x600)
-
-# Make cmake find the msvc redistributables
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP FALSE)
-set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
-set(CMAKE_INSTALL_OPENMP_LIBRARIES ${WITH_OPENMP})
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
-include(InstallRequiredSystemLibraries)
-
+# We want to support Windows 7 level ABI
+add_definitions(-D_WIN32_WINNT=0x601)
+include("build_files/cmake/platform/platform_win32_bundle_crt.cmake")
 remove_cc_flag("/MDd" "/MD")
 
 if(MSVC_CLANG) # Clangs version of cl doesn't support all flags
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARN_FLAGS} /nologo /J /Gd /EHsc -Wno-unused-command-line-argument -Wno-microsoft-enum-forward-reference ")
 	set(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} /nologo /J /Gd -Wno-unused-command-line-argument -Wno-microsoft-enum-forward-reference")
 else()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /nologo /J /Gd /MP /EHsc")
-	set(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} /nologo /J /Gd /MP")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /nologo /J /Gd /MP /EHsc /bigobj")
+	set(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} /nologo /J /Gd /MP /bigobj")
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /ZI")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd /ZI")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT")
 set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT")
+
+#JMC is available on msvc 15.8 (1915) and up
+if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /JMC")
+endif()
 
 set(PLATFORM_LINKFLAGS "${PLATFORM_LINKFLAGS} /SUBSYSTEM:CONSOLE /STACK:2097152 /INCREMENTAL:NO ")
 set(PLATFORM_LINKFLAGS "${PLATFORM_LINKFLAGS} /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:msvcmrt.lib /NODEFAULTLIB:msvcurt.lib /NODEFAULTLIB:msvcrtd.lib ")
@@ -164,33 +162,37 @@ set(PLATFORM_LINKFLAGS_DEBUG "${PLATFORM_LINKFLAGS_DEBUG} /IGNORE:4099 /NODEFAUL
 
 if(NOT DEFINED LIBDIR)
 
-	# Setup 64bit and 64bit windows systems
-	if(CMAKE_CL_64)
-		message(STATUS "64 bit compiler detected.")
-		set(LIBDIR_BASE "win64")
-	else()
-		message(STATUS "32 bit compiler detected.")
-		set(LIBDIR_BASE "windows")
-	endif()
-	# Can be 1910..1912
-	if(MSVC_VERSION GREATER 1919)
-		message(STATUS "Visual Studio 2019 detected.")
-		set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc14)
-	elseif(MSVC_VERSION GREATER 1909)
-		message(STATUS "Visual Studio 2017 detected.")
-		set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc14)
-	elseif(MSVC_VERSION EQUAL 1900)
-		message(STATUS "Visual Studio 2015 detected.")
-		set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc14)
-	else()
-		message(STATUS "Visual Studio 2013 detected.")
-		set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc12)
-	endif()
+  # Setup 64bit and 64bit windows systems
+  if(CMAKE_CL_64)
+    message(STATUS "64 bit compiler detected.")
+    set(LIBDIR_BASE "win64")
+  else()
+    message(FATAL_ERROR "32 bit compiler detected, lamina no longer provides pre-build libraries for 32 bit windows, please set the LIBDIR cmake variable to your own library folder")
+  endif()
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.30.30423)
+    message(STATUS "Visual Studio 2022 detected.")
+    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc15)
+  elseif(MSVC_VERSION GREATER 1919)
+    message(STATUS "Visual Studio 2019 detected.")
+    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc15)
+  elseif(MSVC_VERSION GREATER 1909)
+    message(STATUS "Visual Studio 2017 detected.")
+    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc15)
+  elseif(MSVC_VERSION EQUAL 1900)
+    message(STATUS "Visual Studio 2015 detected.")
+    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc15)
+  endif()
 else()
-	message(STATUS "Using pre-compiled LIBDIR: ${LIBDIR}")
+  message(STATUS "Using pre-compiled LIBDIR: ${LIBDIR}")
 endif()
 if(NOT EXISTS "${LIBDIR}/")
-	message(FATAL_ERROR "Windows requires pre-compiled libs at: '${LIBDIR}'")
+	message(FATAL_ERROR "\n\nWindows requires pre-compiled libs at: '${LIBDIR}'")
+endif()
+
+# Mark libdir as system headers with a lower warn level, to resolve some warnings
+# that we have very little control over
+if(MSVC_VERSION GREATER_EQUAL 1914 AND NOT MSVC_CLANG)
+  add_compile_options(/experimental:external /external:templates- /external:I "${LIBDIR}" /external:W0)
 endif()
 
 # Add each of our libraries to our cmake_prefix_path so find_package() could work
@@ -376,9 +378,6 @@ if(WITH_BOOST)
 		if(CMAKE_CL_64)
 			set(BOOST_POSTFIX "vc140-mt-s-x64-1_68.lib")
 			set(BOOST_DEBUG_POSTFIX "vc140-mt-sgd-x64-1_68.lib")
-		else()
-			set(BOOST_POSTFIX "vc140-mt-s-x32-1_68.lib")
-			set(BOOST_DEBUG_POSTFIX "vc140-mt-sgd-x32-1_68.lib")
 		endif()
 		set(BOOST_LIBRARIES
 			optimized ${BOOST_LIBPATH}/libboost_date_time-${BOOST_POSTFIX}
@@ -414,7 +413,7 @@ endif()
 
 if(WITH_OPENIMAGEIO)
 	windows_find_package(OpenImageIO)
-	set(OPENIMAGEIO ${LIBDIR}/openimageio)
+	set(OPENIMAGEIO ${LIBDIR}/OpenImageIO)
 	set(OPENIMAGEIO_LIBPATH ${OPENIMAGEIO}/lib)
 	set(OPENIMAGEIO_INCLUDE_DIRS ${OPENIMAGEIO}/include)
 	set(OIIO_OPTIMIZED optimized ${OPENIMAGEIO_LIBPATH}/OpenImageIO.lib optimized ${OPENIMAGEIO_LIBPATH}/OpenImageIO_Util.lib)
@@ -455,14 +454,14 @@ if(WITH_LLVM)
 endif()
 
 if(WITH_OPENCOLORIO)
-	set(OPENCOLORIO ${LIBDIR}/opencolorio)
+	set(OPENCOLORIO ${LIBDIR}/OpenColorIO)
 	set(OPENCOLORIO_INCLUDE_DIRS ${OPENCOLORIO}/include)
-	set(OPENCOLORIO_LIBPATH ${LIBDIR}/opencolorio/lib)
+	set(OPENCOLORIO_LIBPATH ${OPENCOLORIO}/lib)
 	set(OPENCOLORIO_LIBRARIES
 		optimized ${OPENCOLORIO_LIBPATH}/OpenColorIO.lib
 		optimized ${OPENCOLORIO_LIBPATH}/tinyxml.lib
 		optimized ${OPENCOLORIO_LIBPATH}/libyaml-cpp.lib
-		debug ${OPENCOLORIO_LIBPATH}/OpenColorIO_d.lib
+		debug ${OPENCOLORIO_LIBPATH}/OpencolorIO_d.lib
 		debug ${OPENCOLORIO_LIBPATH}/tinyxml_d.lib
 		debug ${OPENCOLORIO_LIBPATH}/libyaml-cpp_d.lib
 	)
@@ -473,8 +472,8 @@ if(WITH_OPENVDB)
 	set(BLOSC_LIBRARIES optimized ${LIBDIR}/blosc/lib/libblosc.lib debug ${LIBDIR}/blosc/lib/libblosc_d.lib)
 	set(TBB_LIBRARIES optimized ${LIBDIR}/tbb/lib/tbb.lib debug ${LIBDIR}/tbb/lib/tbb_debug.lib)
 	set(TBB_INCLUDE_DIR ${LIBDIR}/tbb/include)
-	set(OPENVDB ${LIBDIR}/openvdb)
-	set(OPENVDB_LIBPATH ${LIBDIR}/openvdb/lib)
+	set(OPENVDB ${LIBDIR}/openVDB)
+	set(OPENVDB_LIBPATH ${OPENVDB}/lib)
 	set(OPENVDB_INCLUDE_DIRS ${OPENVDB}/include ${TBB_INCLUDE_DIR})
 	set(OPENVDB_LIBRARIES optimized ${OPENVDB_LIBPATH}/openvdb.lib debug ${OPENVDB_LIBPATH}/openvdb_d.lib ${TBB_LIBRARIES} ${BLOSC_LIBRARIES})
 	set(OPENVDB_DEFINITIONS -DNOMINMAX)
@@ -485,7 +484,7 @@ if(WITH_ALEMBIC)
 	set(ALEMBIC_INCLUDE_DIR ${ALEMBIC}/include)
 	set(ALEMBIC_INCLUDE_DIRS ${ALEMBIC_INCLUDE_DIR})
 	set(ALEMBIC_LIBPATH ${ALEMBIC}/lib)
-	set(ALEMBIC_LIBRARIES optimized ${ALEMBIC}/lib/alembic.lib debug ${ALEMBIC}/lib/alembic_d.lib)
+	set(ALEMBIC_LIBRARIES optimized ${ALEMBIC_LIBPATH}/Alembic.lib debug ${ALEMBIC_LIBPATH}/Alembic_d.lib)
 	set(ALEMBIC_FOUND 1)
 endif()
 
