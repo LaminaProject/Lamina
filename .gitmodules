@@ -1,20 +1,10 @@
 [submodule "release/scripts/addons"]
 	path = release/scripts/addons
-        url = https://github.com/UPBGE/blender-addons-0.2.X.git
+	url = https://github.com/LaminaProject/lamina-addons.git
 	ignore = all
-        branch = master
+	branch = main
 [submodule "release/scripts/addons_contrib"]
 	path = release/scripts/addons_contrib
-	url = https://github.com/UPBGE/blender-addons-contrib-0.2.X.git
+	url = https://github.com/LaminaProject/lamina-addons-contrib.git
 	ignore = all
-	branch = master
-[submodule "release/datafiles/locale"]
-	path = release/datafiles/locale
-	url = git://git.blender.org/blender-translations.git
-	ignore = all
-	branch = master
-[submodule "source/tools"]
-	path = source/tools
-	url = git://git.blender.org/blender-dev-tools.git
-	ignore = all
-	branch = master
+	branch = main
