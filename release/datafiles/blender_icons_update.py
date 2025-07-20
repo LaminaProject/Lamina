@@ -24,8 +24,7 @@ cmd = (
     os.path.join(BASEDIR, "blender_icons.svg"),
     "--export-width=602",
     "--export-height=640",
-    "--without-gui",
-    "--export-png=" + os.path.join(BASEDIR, "blender_icons16.png"),
+    "--export-filename=" + os.path.join(BASEDIR, "blender_icons16.png"),
 )
 run(cmd)
 
@@ -34,8 +33,7 @@ cmd = (
     os.path.join(BASEDIR, "blender_icons.svg"),
     "--export-width=1204",
     "--export-height=1280",
-    "--without-gui",
-    "--export-png=" + os.path.join(BASEDIR, "blender_icons32.png"),
+    "--export-filename=" + os.path.join(BASEDIR, "blender_icons32.png"),
 )
 run(cmd)
 
@@ -43,8 +41,7 @@ run(cmd)
 # For testing it can be good to clear all old
 # rm ./blender_icons16/*.dat
 # rm ./blender_icons32/*.dat
-
-datatoc_icon_split_py = os.path.join(BASEDIR, "..", "..", "source", "blender", "datatoc", "datatoc_icon_split.py")
+datatoc_icon_split_py = os.path.normpath(os.path.join(BASEDIR, "../../source/blender/datatoc/datatoc_icon_split.py"))
 
 # create .dat pixmaps (which are stored in git)
 cmd = (
