@@ -9,7 +9,7 @@
 	#define BLEN_VER_RC_STR STRINGIFY(BLEN_VER_RC_STR_M)
 #endif
 
-APPICON ICON DISCARDABLE "winupbge.ico"
+APPICON ICON DISCARDABLE "winlamina.ico"
 BLENDERFILE ICON DISCARDABLE "winblenderfile.ico"
 
 IDR_VERSION1 VERSIONINFO
@@ -24,11 +24,11 @@ BEGIN
     BEGIN
       VALUE "FileVersion", BLEN_VER_RC_STR
       VALUE "ProductVersion", BLEN_VER_RC_STR
-      VALUE "CompanyName", "UPBGE - Blender Fork"
-      VALUE "FileDescription", "UPBGE"
+      VALUE "CompanyName", "Project Lamina"
+      VALUE "FileDescription", "Lamina - UPBGE 0.2.5 fork"
       VALUE "LegalCopyright", "GPLv2"
-      VALUE "OriginalFilename", "blender-upbge.exe"
-      VALUE "ProductName", "UPBGE"
+      VALUE "OriginalFilename", "lamina.exe"
+      VALUE "ProductName", "Lamina"
     END
   END
   BLOCK "VarFileInfo"
