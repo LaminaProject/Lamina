@@ -56,7 +56,7 @@ const GHOST_TUns8 *GHOST_SystemPathsUnix::getSystemDir(int, const char *versions
 {
 	/* no prefix assumes a portable build which only uses bundled scripts */
 	if (static_path) {
-		static string system_path = string(static_path) + "/upbge/" + versionstr;
+		static string system_path = string(static_path) + "/lamina/";
 		return (GHOST_TUns8 *)system_path.c_str();
 	}
 
@@ -77,7 +77,7 @@ const GHOST_TUns8 *GHOST_SystemPathsUnix::getUserDir(int version, const char *ve
 			last_version = version;
 
 			if (home) {
-				user_path = string(home) + "/.upbge/" + versionstr;
+				user_path = string(home) + "/.lamina/";
 			}
 			else {
 				return NULL;
@@ -92,7 +92,7 @@ const GHOST_TUns8 *GHOST_SystemPathsUnix::getUserDir(int version, const char *ve
 			last_version = version;
 
 			if (home) {
-				user_path = string(home) + "/upbge/" + versionstr;
+				user_path = string(home) + "/lamina/";
 			}
 			else {
 				home = getenv("HOME");
@@ -100,7 +100,7 @@ const GHOST_TUns8 *GHOST_SystemPathsUnix::getUserDir(int version, const char *ve
 				if (home == NULL)
 					home = getpwuid(getuid())->pw_dir;
 
-				user_path = string(home) + "/.config/upbge/" + versionstr;
+				user_path = string(home) + "/.config/lamina/";
 			}
 		}
 
