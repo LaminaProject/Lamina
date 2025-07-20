@@ -22,6 +22,7 @@
  */
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include "DNA_object_types.h"
 #include "DNA_sensor_types.h"
@@ -872,6 +873,106 @@ static void LOGIC_OT_python_component_remove(wmOperatorType *ot)
 	RNA_def_int(ot->srna, "index", 0, 0, INT_MAX, "Index", "Component index to remove", 0, INT_MAX);
 }
 
+static int component_move_up_exec(bContext *C, wmOperator *op)
+{
+  Object *ob = CTX_data_active_object(C);
+  PythonComponent *p1, *p2 = NULL;
+  int index = RNA_int_get(op->ptr, "index");
+
+  if (!ob) {
+    return OPERATOR_CANCELLED;
+  }
+
+  p1 = BLI_findlink(&ob->components, index);
+
+  if (!p1 || index < 1) {
+    return OPERATOR_CANCELLED;
+  }
+
+  p2 = BLI_findlink(&ob->components, index - 1);
+
+  if (!p2) {
+    return OPERATOR_CANCELLED;
+  }
+
+  BLI_listbase_swaplinks(&ob->components, p1, p2);
+
+  WM_event_add_notifier(C, NC_LOGIC, NULL);
+
+  return OPERATOR_FINISHED;
+}
+
+static void LOGIC_OT_python_component_move_up(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Move Component Up";
+  ot->description = "Move Component Up";
+  ot->idname = "LOGIC_OT_python_component_move_up";
+
+  /* api callbacks */
+  ot->exec = component_move_up_exec;
+  ot->poll = ED_operator_object_active_editable;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* properties */
+  RNA_def_int(ot->srna, "index", 0, 0, INT_MAX, "Index", "Component index to move", 0, INT_MAX);
+}
+
+static int component_move_down_exec(bContext *C, wmOperator *op)
+{
+  Object *ob = CTX_data_active_object(C);
+  PythonComponent *p1, *p2 = NULL;
+  int index = RNA_int_get(op->ptr, "index");
+
+  if (!ob) {
+    return OPERATOR_CANCELLED;
+  }
+
+  p1 = BLI_findlink(&ob->components, index);
+
+  if (!p1) {
+    return OPERATOR_CANCELLED;
+  }
+
+  int count = BLI_listbase_count(&ob->components);
+
+  if (index >= count - 1) {
+    return OPERATOR_CANCELLED;
+  }
+
+  p2 = BLI_findlink(&ob->components, index + 1);
+
+  if (!p2) {
+    return OPERATOR_CANCELLED;
+  }
+
+  BLI_listbase_swaplinks(&ob->components, p1, p2);
+
+  WM_event_add_notifier(C, NC_LOGIC, NULL);
+
+  return OPERATOR_FINISHED;
+}
+
+static void LOGIC_OT_python_component_move_down(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Move Component Down";
+  ot->description = "Move Component Down";
+  ot->idname = "LOGIC_OT_python_component_move_down";
+
+  /* api callbacks */
+  ot->exec = component_move_down_exec;
+  ot->poll = ED_operator_object_active_editable;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* properties */
+  RNA_def_int(ot->srna, "index", 0, 0, INT_MAX, "Index", "Component index to move", 0, INT_MAX);
+}
+
 static int component_reload_exec(bContext *C, wmOperator *op)
 {
 	Object *ob = CTX_data_active_object(C);
@@ -942,6 +1043,8 @@ void ED_operatortypes_logic(void)
 	WM_operatortype_append(LOGIC_OT_python_component_create);
 	WM_operatortype_append(LOGIC_OT_python_component_remove);
 	WM_operatortype_append(LOGIC_OT_python_component_reload);
+	WM_operatortype_append(LOGIC_OT_python_component_move_up);
+	WM_operatortype_append(LOGIC_OT_python_component_move_down);
 
 	WM_operatortype_append(LOGIC_OT_view_all);
 }

@@ -66,6 +66,7 @@ UserDef U;
 
 char versionstr[48] = "";
 char upbge_versionstr[48] = "";
+char lamina_versionstr[48] = "";
 
 /* ********** free ********** */
 
@@ -122,6 +123,11 @@ void BKE_upbge_version_string(char *version_str, size_t maxncpy, short version, 
 	}
 }
 
+void BKE_lamina_version_string(char *version_str, size_t maxncpy, short major, short minor, short patch)
+{
+	BLI_snprintf(version_str, maxncpy, "v%d.%d.%d", major, minor, patch);
+}
+
 void BKE_blender_globals_init(void)
 {
 	memset(&G, 0, sizeof(Global));
@@ -134,6 +140,7 @@ void BKE_blender_globals_init(void)
 
 	BKE_blender_version_string(versionstr, sizeof(versionstr), BLENDER_VERSION, BLENDER_SUBVERSION, true, true);
 	BKE_upbge_version_string(upbge_versionstr, sizeof(versionstr), UPBGE_VERSION, UPBGE_SUBVERSION, true, true);
+	BKE_lamina_version_string(lamina_versionstr, sizeof(lamina_versionstr), LAMINA_VERSION_MAJOR, LAMINA_VERSION_MINOR, LAMINA_VERSION_PATCH);
 
 #ifndef WITH_PYTHON_SECURITY /* default */
 	G.f |= G_SCRIPT_AUTOEXEC;

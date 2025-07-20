@@ -209,6 +209,7 @@ static const EnumPropertyItem buttons_context_items[] = {
 	{BCONTEXT_BONE, "BONE", ICON_BONE_DATA, "Bone", "Bone"},
 	{BCONTEXT_BONE_CONSTRAINT, "BONE_CONSTRAINT", ICON_CONSTRAINT_BONE, "Bone Constraints", "Bone constraints"},
 	{BCONTEXT_MATERIAL, "MATERIAL", ICON_MATERIAL, "Material", "Material"},
+	{BCONTEXT_GAME, "GAME", ICON_SCRIPT, "Game", "Game Object Properties"},
 	{BCONTEXT_TEXTURE, "TEXTURE", ICON_TEXTURE, "Texture", "Texture"},
 	{BCONTEXT_PARTICLE, "PARTICLES", ICON_PARTICLES, "Particles", "Particle"},
 	{BCONTEXT_PHYSICS, "PHYSICS", ICON_PHYSICS, "Physics", "Physics"},
@@ -1122,6 +1123,10 @@ static const EnumPropertyItem *rna_SpaceProperties_context_itemf(bContext *UNUSE
 
 	if (sbuts->pathflag & (1 << BCONTEXT_BONE_CONSTRAINT)) {
 		RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_BONE_CONSTRAINT);
+	}
+
+	if (sbuts->pathflag & (1 << BCONTEXT_GAME)) {
+		RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_GAME);
 	}
 
 	if (sbuts->pathflag & (1 << BCONTEXT_MATERIAL)) {

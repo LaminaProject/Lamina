@@ -156,6 +156,8 @@ static void buttons_main_region_draw(const bContext *C, ARegion *ar)
 		ED_region_panels(C, ar, "particle", sbuts->mainb, vertical);
 	else if (sbuts->mainb == BCONTEXT_PHYSICS)
 		ED_region_panels(C, ar, "physics", sbuts->mainb, vertical);
+	else if (sbuts->mainb == BCONTEXT_GAME)
+		ED_region_panels(C, ar, "game", sbuts->mainb, vertical);
 	else if (sbuts->mainb == BCONTEXT_BONE)
 		ED_region_panels(C, ar, "bone", sbuts->mainb, vertical);
 	else if (sbuts->mainb == BCONTEXT_MODIFIER)
@@ -253,6 +255,7 @@ static void buttons_area_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *
 				case ND_TRANSFORM:
 					buttons_area_redraw(sa, BCONTEXT_OBJECT);
 					buttons_area_redraw(sa, BCONTEXT_DATA); /* autotexpace flag */
+					buttons_area_redraw(sa, BCONTEXT_GAME);
 					break;
 				case ND_POSE:
 					buttons_area_redraw(sa, BCONTEXT_DATA);
@@ -283,6 +286,7 @@ static void buttons_area_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *
 					buttons_area_redraw(sa, BCONTEXT_OBJECT);
 					buttons_area_redraw(sa, BCONTEXT_DATA);
 					buttons_area_redraw(sa, BCONTEXT_PHYSICS);
+					buttons_area_redraw(sa, BCONTEXT_GAME);
 					break;
 				case ND_SHADING:
 				case ND_SHADING_DRAW:
@@ -297,6 +301,8 @@ static void buttons_area_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *
 					break;
 			}
 			break;
+		case NC_LOGIC:
+			buttons_area_redraw(sa, BCONTEXT_GAME);
 		case NC_GEOM:
 			switch (wmn->data) {
 				case ND_SELECT:

@@ -31,8 +31,11 @@ class INFO_HT_header(Header):
         scene = context.scene
         rd = scene.render
 
-        row = layout.row(align=True)
+        row = layout.row(align=False)
+        
         row.template_header()
+        
+        row.operator("wm.splash", text="", icon='BLENDER', emboss=False)
 
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -42,11 +45,6 @@ class INFO_HT_header(Header):
         else:
             layout.template_ID(context.window, "screen", new="screen.new", unlink="screen.delete")
             layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete")
-
-        layout.separator()
-
-        if rd.has_multiple_engines:
-            layout.prop(rd, "engine", text="")
 
         layout.separator()
 
@@ -68,7 +66,6 @@ class INFO_HT_header(Header):
             row.label(bpy.app.autoexec_fail_message)
             return
 
-        row.operator("wm.splash", text="", icon='BLENDER', emboss=False)
         row.label(text=scene.statistics(), translate=False)
 
 
@@ -205,6 +202,12 @@ class INFO_MT_file_external_data(Menu):
         unpack_all.operator("file.unpack_all")
         unpack_all.active = not bpy.data.use_autopack
 
+        pack_all_libraries = layout.row()
+        pack_all_libraries.operator("file.pack_libraries")
+
+        unpack_all_libraries = layout.row()
+        unpack_all_libraries.operator("file.unpack_libraries")
+
         layout.separator()
 
         layout.operator("file.make_paths_relative")
@@ -236,35 +239,31 @@ class INFO_MT_game(Menu):
 
         gs = context.scene.game_settings
 
-        layout.operator("view3d.game_start")
+        col = layout.column()
+        col.prop(gs, "use_auto_start")
+        col.separator()
+        col.menu("INFO_MT_game_debug_options")
 
-        layout.separator()
-
-        layout.prop(gs, "show_framerate_profile")
-        layout.prop(gs, "show_render_queries")
-        layout.prop(gs, "use_deprecation_warnings")
-        layout.menu("INFO_MT_game_show_debug")
-        layout.separator()
-        layout.prop(gs, "use_auto_start")
-
-
-class INFO_MT_game_show_debug(Menu):
-    bl_label = "Show Debug"
+class INFO_MT_game_debug_options(Menu):
+    bl_label = "Debug"
 
     def draw(self, context):
         layout = self.layout
 
         gs = context.scene.game_settings
 
-        layout.prop(gs, "show_debug_properties")
-        layout.prop(gs, "show_physics_visualization")
+        col = layout.column(align=True)
 
-        layout.separator()
-        layout.prop_menu_enum(gs, "show_bounding_box")
-        layout.prop_menu_enum(gs, "show_armatures")
-        layout.prop_menu_enum(gs, "show_camera_frustum")
-        layout.prop_menu_enum(gs, "show_shadow_frustum")
-
+        col.prop(gs, "use_deprecation_warnings")
+        col.prop(gs, "show_framerate_profile")
+        col.prop(gs, "show_render_queries")
+        col.prop(gs, "show_debug_properties")
+        col.prop(gs, "show_physics_visualization")
+        col.separator()
+        col.prop_menu_enum(gs, "show_armatures")
+        col.prop_menu_enum(gs, "show_bounding_box")
+        col.prop_menu_enum(gs, "show_camera_frustum")
+        col.prop_menu_enum(gs, "show_shadow_frustum")
 
 class INFO_MT_render(Menu):
     bl_label = "Render"
@@ -365,10 +364,6 @@ class INFO_MT_help(Menu):
 
         layout.operator("wm.operator_cheat_sheet", icon='TEXT')
         layout.operator("wm.sysinfo", icon='TEXT')
-        layout.separator()
-
-        layout.operator("wm.splash", icon='BLENDER')
-
 
 classes = (
     INFO_HT_header,
@@ -379,7 +374,7 @@ classes = (
     INFO_MT_file_external_data,
     INFO_MT_file_previews,
     INFO_MT_game,
-    INFO_MT_game_show_debug,
+    INFO_MT_game_debug_options,
     INFO_MT_render,
     INFO_MT_opengl_render,
     INFO_MT_window,

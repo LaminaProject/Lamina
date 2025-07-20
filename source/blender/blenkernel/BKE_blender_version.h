@@ -32,6 +32,10 @@
 #define UPBGE_VERSION           2
 #define UPBGE_SUBVERSION        5
 
+#define LAMINA_VERSION_MAJOR    1
+#define LAMINA_VERSION_MINOR    0
+#define LAMINA_VERSION_PATCH    0
+
 /* used by packaging tools */
 /* can be left blank, otherwise a,b,c... etc with no quotes */
 #define BLENDER_VERSION_CHAR
@@ -40,5 +44,6 @@
 
 extern char versionstr[]; /* from blender.c */
 extern char upbge_versionstr[]; /* from blender.c */
+extern char lamina_versionstr[];
 
 #endif  /* __BKE_BLENDER_VERSION_H__ */

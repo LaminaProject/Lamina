@@ -42,7 +42,7 @@ void BKE_blender_version_string(
 void BKE_upbge_version_string(
         char *version_str, size_t maxncpy,
         short version, short subversion, bool v_prefix, bool include_subversion);
-
+void BKE_lamina_version_string(char *version_str, size_t maxncpy, short major, short minor, short patch);
 
 void BKE_blender_userdef_data_swap(struct UserDef *userdef_dst, struct UserDef *userdef_src);
 void BKE_blender_userdef_data_set(struct UserDef *userdef);

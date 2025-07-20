@@ -439,7 +439,7 @@ static void stats_string(Scene *scene)
 	s = stats->infostr;
 	ofs = 0;
 
-	ofs += BLI_snprintf(s + ofs, MAX_INFO_LEN - ofs, "%s (based on Blender %s)  | ", upbge_versionstr, versionstr);
+	ofs += BLI_snprintf(s + ofs, MAX_INFO_LEN - ofs, "Lamina %s | ", lamina_versionstr);
 
 	if (scene->obedit) {
 		if (BKE_keyblock_from_object(scene->obedit))
