@@ -39,7 +39,7 @@
 #include "PHY_IMotionState.h"
 #include "PHY_ICharacter.h"
 
-extern float gDeactivationTime;
+extern btScalar gDeactivationTime;
 extern float gLinearSleepingTreshold;
 extern float gAngularSleepingTreshold;
 extern bool gDisableDeactivation;
@@ -479,13 +479,13 @@ public:
 	{
 		return onGround();
 	}
-	virtual float GetGravity()
+	virtual mt::vec3 GetGravity()
 	{
-		return getGravity();
+		return ToMt(getGravity());
 	}
-	virtual void SetGravity(float gravity)
+	virtual void SetGravity(const mt::vec3& gravity)
 	{
-		setGravity(gravity);
+		setGravity(ToBullet(gravity));
 	}
 	virtual unsigned char GetMaxJumps()
 	{

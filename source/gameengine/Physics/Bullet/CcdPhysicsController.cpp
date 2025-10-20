@@ -51,7 +51,7 @@
 /// todo: fill all the empty CcdPhysicsController methods, hook them up to the btRigidBody class
 
 //'temporarily' global variables
-extern float gDeactivationTime;
+extern btScalar gDeactivationTime;
 extern bool gDisableDeactivation;
 
 float gLinearSleepingTreshold;
@@ -59,7 +59,7 @@ float gAngularSleepingTreshold;
 
 CcdCharacter::CcdCharacter(CcdPhysicsController *ctrl, btMotionState *motionState,
                            btPairCachingGhostObject *ghost, btConvexShape *shape, float stepHeight)
-	:btKinematicCharacterController(ghost, shape, stepHeight, 2),
+	:btKinematicCharacterController(ghost, shape, stepHeight, btVector3(0.0, 0.0, 1.0)),
 	m_ctrl(ctrl),
 	m_motionState(motionState),
 	m_jumps(0),
