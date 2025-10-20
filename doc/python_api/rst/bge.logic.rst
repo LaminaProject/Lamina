@@ -124,7 +124,7 @@ Variables
 
 .. data:: mouse
 
-   The current mouse wrapped in an :class:`~bge.types.SCA_PythonMouse` object.
+   The current mouse wrapped in an :class:`~bge.types.DEV_PythonMouse` object.
 
 .. data:: joysticks
 
@@ -1231,7 +1231,7 @@ Blender Material
 Input Status
 ------------
 
-See :class:`bge.types.SCA_PythonKeyboard`, :class:`bge.types.SCA_PythonMouse`, :class:`bge.types.SCA_MouseSensor`, :class:`bge.types.SCA_KeyboardSensor`
+See :class:`bge.types.SCA_PythonKeyboard`, :class:`bge.types.DEV_PythonMouse`, :class:`bge.types.SCA_MouseSensor`, :class:`bge.types.SCA_KeyboardSensor`
 
 .. data:: KX_INPUT_NONE
 .. data:: KX_INPUT_JUST_ACTIVATED

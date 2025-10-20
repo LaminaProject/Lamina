@@ -398,6 +398,9 @@ bool KX_KetsjiEngine::NextFrame()
 		if (m_inputDevice) {
 			m_inputDevice->ReleaseMoveEvent();
 		}
+
+		// mouse delta
+		gp_PythonMouse->CalculateDelta();
 #ifdef WITH_SDL
 		// Handle all SDL Joystick events here to share them for all scenes properly.
 		short addrem[JOYINDEX_MAX] = {0};

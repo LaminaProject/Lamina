@@ -35,10 +35,13 @@
 #include "EXP_Python.h"
 #include <string>
 
+#include "DEV_PythonMouse.h"
 #include "DEV_JoystickDefines.h" // For JOYINDEX_MAX
 
 class KX_KetsjiEngine;
 struct Main;
+
+extern std::unique_ptr<DEV_PythonMouse> gp_PythonMouse;
 
 #ifdef WITH_PYTHON
 PyMODINIT_FUNC initBGE(void);

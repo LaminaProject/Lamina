@@ -18,44 +18,52 @@
  * Contributor(s): none yet.
  *
  * ***** END GPL LICENSE BLOCK *****
- */
+*/
 
-/** \file SCA_PythonMouse.h
+/** \file DEV_PythonMouse.h
  *  \ingroup gamelogic
- */
+*/
 
-#ifndef __SCA_PYTHONMOUSE_H__
-#define __SCA_PYTHONMOUSE_H__
+#ifndef __DEV_PYTHONMOUSE_H__
+#define __DEV_PYTHONMOUSE_H__
 
 #include "EXP_PyObjectPlus.h"
 
-class SCA_PythonMouse : public EXP_PyObjectPlus
+class DEV_PythonMouse : public EXP_PyObjectPlus
 {
 	Py_Header
 private:
 	class SCA_IInputDevice *m_mouse;
 	class RAS_ICanvas *m_canvas;
+	mathfu::vec2 m_oldPosition;
+	mathfu::vec2 m_deltaPosition;
+
 #ifdef WITH_PYTHON
 	PyObject *m_event_dict;
 #endif
 public:
-	SCA_PythonMouse(class SCA_IInputDevice* mouse, class RAS_ICanvas* canvas);
-	virtual ~SCA_PythonMouse();
+	DEV_PythonMouse(class SCA_IInputDevice* mouse, class RAS_ICanvas* canvas);
+	virtual ~DEV_PythonMouse();
 
-	void Show(bool visible);
+	// void Show(bool visible);
+	void Centralize();
+	void CalculateDelta();
+	inline mathfu::vec2 GetDeltaPosition() { return m_deltaPosition; }
 
 #ifdef WITH_PYTHON
-	EXP_PYMETHOD_DOC(SCA_PythonMouse, show);
+	// EXP_PYMETHOD_DOC(DEV_PythonMouse, show);
+	EXP_PYMETHOD_NOARGS(DEV_PythonMouse,CentralizeCursor);
 
 	static PyObject *pyattr_get_events(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef);
 	static PyObject *pyattr_get_inputs(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef);
 	static PyObject *pyattr_get_active_events(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef);
 	static PyObject *pyattr_get_active_inputs(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef);
 	static PyObject *pyattr_get_position(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef);
+	static PyObject *pyattr_get_deltaPosition(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef);
 	static int       pyattr_set_position(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef, PyObject *value);
 	static PyObject *pyattr_get_visible(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef);
 	static int       pyattr_set_visible(EXP_PyObjectPlus *self_v, const EXP_PYATTRIBUTE_DEF *attrdef, PyObject *value);
 #endif
 };
 
-#endif  /* __SCA_PYTHONMOUSE_H__ */
+#endif  /* __DEV_PYTHONMOUSE_H__ */

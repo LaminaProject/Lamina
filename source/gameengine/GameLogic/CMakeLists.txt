@@ -75,7 +75,6 @@ set(SRC
 	SCA_PythonController.cpp
 	SCA_PythonJoystick.cpp
 	SCA_PythonKeyboard.cpp
-	SCA_PythonMouse.cpp
 	SCA_RandomActuator.cpp
 	SCA_RandomNumberGenerator.cpp
 	SCA_RandomSensor.cpp
@@ -116,7 +115,6 @@ set(SRC
 	SCA_PythonController.h
 	SCA_PythonJoystick.h
 	SCA_PythonKeyboard.h
-	SCA_PythonMouse.h
 	SCA_RandomActuator.h
 	SCA_RandomNumberGenerator.h
 	SCA_RandomSensor.h

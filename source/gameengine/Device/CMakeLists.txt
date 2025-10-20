@@ -44,12 +44,14 @@ set(SRC
 	DEV_Joystick.cpp
 	DEV_JoystickEvents.cpp
 	DEV_JoystickVibration.cpp
+	DEV_PythonMouse.cpp
 
 	DEV_EventConsumer.h
 	DEV_InputDevice.h
 	DEV_Joystick.h
 	DEV_JoystickDefines.h
 	DEV_JoystickPrivate.h
+	DEV_PythonMouse.h
 )
 
 if(WITH_SDL)

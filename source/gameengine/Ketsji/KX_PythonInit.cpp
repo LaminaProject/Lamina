@@ -70,6 +70,8 @@ extern "C" {
 #  include "BLI_winstuff.h"
 #endif
 
+#include "DEV_PythonMouse.h"
+
 //python physics binding
 #include "KX_PyConstraintBinding.h"
 
@@ -93,7 +95,6 @@ extern "C" {
 #include "SCA_JoystickManager.h" /* JOYINDEX_MAX */
 #include "SCA_PythonJoystick.h"
 #include "SCA_PythonKeyboard.h"
-#include "SCA_PythonMouse.h"
 #include "SCA_2DFilterActuator.h"
 #include "KX_ConstraintActuator.h"
 #include "KX_SoundActuator.h"
@@ -152,7 +153,7 @@ extern "C" {
 #ifdef WITH_PYTHON
 
 static std::unique_ptr<SCA_PythonKeyboard> gp_PythonKeyboard;
-static std::unique_ptr<SCA_PythonMouse> gp_PythonMouse;
+std::unique_ptr<DEV_PythonMouse> gp_PythonMouse;
 static std::unique_ptr<SCA_PythonJoystick> gp_PythonJoysticks[JOYINDEX_MAX];
 
 static struct {
@@ -1531,7 +1532,7 @@ PyMODINIT_FUNC initGameLogicPythonBinding()
 	PyDict_SetItemString(d, "keyboard", gp_PythonKeyboard->GetProxy());
 
 	BLI_assert(!gp_PythonMouse);
-	gp_PythonMouse.reset(new SCA_PythonMouse(engine->GetInputDevice(), engine->GetCanvas()));
+	gp_PythonMouse.reset(new DEV_PythonMouse(engine->GetInputDevice(), engine->GetCanvas()));
 	PyDict_SetItemString(d, "mouse", gp_PythonMouse->GetProxy());
 
 	PyObject *joylist = PyList_New(JOYINDEX_MAX);

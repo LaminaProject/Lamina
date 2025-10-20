@@ -42,6 +42,7 @@
 #include "BL_ArmatureObject.h"
 #include "BL_ArmatureChannel.h"
 #include "BL_Texture.h"
+#include "DEV_PythonMouse.h"
 #include "KX_2DFilter.h"
 #include "KX_2DFilterManager.h"
 #include "KX_2DFilterOffScreen.h"
@@ -97,7 +98,6 @@
 #include "SCA_XORController.h"
 #include "SCA_PythonJoystick.h"
 #include "SCA_PythonKeyboard.h"
-#include "SCA_PythonMouse.h"
 #include "KX_NearSensor.h"
 #include "KX_RadarSensor.h"
 #include "KX_RaySensor.h"
@@ -224,6 +224,7 @@ PyMODINIT_FUNC initGameTypesPythonBinding(void)
 		PyType_Ready_Attr(dict, EXP_BaseListValue, init_getset);
 		PyType_Ready_Attr(dict, EXP_BaseListWrapper, init_getset);
 		PyType_Ready_Attr(dict, EXP_Value, init_getset);
+		PyType_Ready_Attr(dict, DEV_PythonMouse, init_getset);
 		PyType_Ready_Attr(dict, KX_2DFilter, init_getset);
 		PyType_Ready_Attr(dict, KX_2DFilterManager, init_getset);
 		PyType_Ready_Attr(dict, KX_2DFilterOffScreen, init_getset);
@@ -304,7 +305,6 @@ PyMODINIT_FUNC initGameTypesPythonBinding(void)
 		PyType_Ready_Attr(dict, SCA_IController, init_getset);
 		PyType_Ready_Attr(dict, SCA_PythonJoystick, init_getset);
 		PyType_Ready_Attr(dict, SCA_PythonKeyboard, init_getset);
-		PyType_Ready_Attr(dict, SCA_PythonMouse, init_getset);
 		PyType_Ready_Attr(dict, Texture, init_getset);
 	}
 
